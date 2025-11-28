@@ -1,0 +1,8 @@
+# SoundBooster dependencies
+pycaw>=20230322
+comtypes>=1.1.14
+pillow>=9.0.0
+customtkinter>=5.2.0
+
+# Build dependencies (optional)
+# pyinstaller>=5.0
