@@ -2,7 +2,12 @@
 echo === Сборка SoundBooster для Windows ===
 echo.
 
-python build.py
+cd /d "%~dp0"
+python scripts\download_equalizer_apo.py
+if errorlevel 1 goto end
 
+python scripts\build.py
+
+:end
 echo.
-pause 
+pause

@@ -10,8 +10,9 @@ dist/
 SoundBooster-Dist/
 
 # Third-party installer used for release packaging.
-# Download with tools/download_equalizer_apo.py before building a release.
+# Download with scripts/download_equalizer_apo.py before building a release.
 EqualizerAPO.exe
+EqualizerAPO.exe.download
 
 # Logs
 *.log

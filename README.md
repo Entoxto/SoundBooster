@@ -63,14 +63,14 @@ Include: sound_booster_gain.txt
 - Windows 10 или Windows 11.
 - Python 3.14 для разработки в текущем состоянии проекта.
 - EqualizerAPO для усиления выше 100%.
-- Зависимости из `requirements.txt`.
+- Зависимости из `config/requirements.txt`.
 
 Установщик EqualizerAPO не хранится в этом репозитории. Если нужно, чтобы приложение предлагало установку EqualizerAPO, положите `EqualizerAPO.exe` в корень проекта перед запуском или сборкой.
 
 Для релизной сборки можно скачать официальный x64-установщик EqualizerAPO:
 
 ```powershell
-python tools/download_equalizer_apo.py
+python scripts/download_equalizer_apo.py
 ```
 
 Скрипт сохраняет установщик как `EqualizerAPO.exe`, проверяет SHA256 и только после этого использует файл для сборки.
@@ -80,27 +80,31 @@ python tools/download_equalizer_apo.py
 ```powershell
 git clone https://github.com/Entoxto/SoundBooster.git
 cd SoundBooster
-python -m pip install -r requirements.txt
-python sound_booster.py
+start.bat
 ```
 
-Также можно запустить:
+`start.bat` установит зависимости из `config/requirements.txt` и запустит приложение из папки `app/`.
+
+Если нужен ручной запуск без батника:
 
 ```powershell
-run.bat
+python -m pip install -r config/requirements.txt
+python app/sound_booster.py
 ```
 
 ## Сборка
 
 ```powershell
-python -m pip install -r requirements.txt
-python build.py
+build.bat
 ```
 
-Или:
+`build.bat` скачивает официальный установщик EqualizerAPO, проверяет SHA256 и собирает релизную папку.
+
+Если нужна ручная сборка без батника:
 
 ```powershell
-build.bat
+python scripts/download_equalizer_apo.py
+python scripts/build.py
 ```
 
 PyInstaller сначала создает `dist/SoundBooster.exe`. После этого `build.py` собирает итоговую папку для распространения:
@@ -119,19 +123,27 @@ SoundBooster-Dist/
 
 ```txt
 SoundBooster/
-├── sound_booster.py          # Точка входа, UI, настройки, управление громкостью через pycaw
-├── equalizer_integration.py  # Поиск EqualizerAPO, запуск установщика, запись конфигов
-├── icon.py                   # Генерация иконки приложения
-├── smoke_test.py             # Проверка импорта, pycaw и статуса EqualizerAPO без запуска GUI
-├── build.py                  # Сборка exe через PyInstaller
-├── build.bat                 # Запуск сборки
-├── run.bat                   # Запуск приложения из исходников
-├── tools/
-│   └── download_equalizer_apo.py # Загрузка официального установщика EqualizerAPO
-├── THIRD_PARTY_NOTICES.txt   # Источник и лицензия стороннего установщика
-├── requirements.txt          # Зависимости Python
+├── start.bat                 # Пользовательский запуск приложения из исходников
+├── build.bat                 # Пользовательская сборка релизной папки
+├── app/
+│   ├── sound_booster.py          # Точка входа, UI, настройки, управление громкостью через pycaw
+│   ├── equalizer_integration.py  # Поиск EqualizerAPO, запуск установщика, запись конфигов
+│   └── icon.py                   # Генерация иконки приложения
+├── scripts/
+│   ├── build.py                  # Сборка exe через PyInstaller
+│   ├── download_equalizer_apo.py # Загрузка официального установщика EqualizerAPO
+│   └── smoke_test.py             # Проверка без запуска GUI
+├── config/
+│   └── requirements.txt          # Зависимости Python
+├── docs/
+│   └── THIRD_PARTY_NOTICES.txt   # Источник и лицензия стороннего установщика
 └── README.md
 ```
+
+Для обычной работы в корне нужны только два сценария:
+
+- `start.bat` — запустить приложение из исходников.
+- `build.bat` — скачать EqualizerAPO и собрать `SoundBooster-Dist/`.
 
 Локальные файлы, которые не нужно коммитить:
 
@@ -150,13 +162,13 @@ SoundBooster/
 
 ### Приложение не может установить EqualizerAPO
 
-SoundBooster не скачивает установщик сам. Он только запускает локальный файл `EqualizerAPO.exe`. Положите этот файл рядом с `sound_booster.py` при запуске из исходников или в корень проекта перед сборкой.
+SoundBooster не скачивает установщик сам. Он только запускает локальный файл `EqualizerAPO.exe`. Положите этот файл в корень проекта перед запуском из исходников или перед сборкой.
 
 Для подготовки релиза используйте:
 
 ```powershell
-python tools/download_equalizer_apo.py
-python build.py
+python scripts/download_equalizer_apo.py
+python scripts/build.py
 ```
 
 Если EqualizerAPO уже установлен на компьютере пользователя, SoundBooster не запускает установщик повторно.
@@ -170,19 +182,19 @@ PyInstaller-сборки иногда вызывают ложные срабат
 Быстрая проверка синтаксиса:
 
 ```powershell
-python -m py_compile sound_booster.py equalizer_integration.py icon.py build.py smoke_test.py tools/download_equalizer_apo.py
+python -m py_compile app/sound_booster.py app/equalizer_integration.py app/icon.py scripts/build.py scripts/smoke_test.py scripts/download_equalizer_apo.py
 ```
 
 Проверка разрешения зависимостей под текущую версию Python:
 
 ```powershell
-python -m pip install --dry-run -r requirements.txt
+python -m pip install --dry-run -r config/requirements.txt
 ```
 
 Smoke-проверка без запуска GUI:
 
 ```powershell
-python smoke_test.py
+python scripts/smoke_test.py
 ```
 
 Интерфейс, работу `pycaw`, обнаружение EqualizerAPO и запись в конфиг EqualizerAPO нужно проверять вручную на Windows с реальным аудиоустройством.

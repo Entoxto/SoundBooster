@@ -25,8 +25,14 @@ POSSIBLE_PATHS = [
 # Имя файла конфигурации для усиления
 BOOST_CONFIG_NAME = "sound_booster_gain.txt"
 
-# Путь к локальному установщику EqualizerAPO
-LOCAL_INSTALLER_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "EqualizerAPO.exe")
+APP_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(APP_DIR)
+
+# Возможные пути к локальному установщику EqualizerAPO
+LOCAL_INSTALLER_PATHS = [
+    os.path.join(APP_DIR, "EqualizerAPO.exe"),
+    os.path.join(PROJECT_ROOT, "EqualizerAPO.exe"),
+]
 
 
 def get_bundled_resource_path(relative_path):
@@ -51,7 +57,15 @@ def get_bundled_resource_path(relative_path):
         logger.error(f"Ошибка при получении пути к ресурсу: {e}")
     
     # Если запущено как обычный скрипт или файл не найден в ресурсах
-    return os.path.join(os.path.dirname(os.path.abspath(__file__)), relative_path)
+    local_paths = [
+        os.path.join(APP_DIR, relative_path),
+        os.path.join(PROJECT_ROOT, relative_path),
+    ]
+    for local_path in local_paths:
+        if os.path.exists(local_path):
+            return local_path
+
+    return local_paths[0]
 
 
 def extract_bundled_installer(target_path=None):
@@ -205,10 +219,14 @@ def set_boost_level(equalizer_path, boost_factor):
 def install_equalizer_apo_from_local():
     """Устанавливает EqualizerAPO из локального файла или встроенного ресурса"""
     # Сначала проверяем, существует ли установщик в текущей директории
-    if os.path.exists(LOCAL_INSTALLER_PATH):
-        installer_path = LOCAL_INSTALLER_PATH
-        logger.info(f"Используется локальный установщик: {installer_path}")
-    else:
+    installer_path = None
+    for local_installer_path in LOCAL_INSTALLER_PATHS:
+        if os.path.exists(local_installer_path):
+            installer_path = local_installer_path
+            logger.info(f"Используется локальный установщик: {installer_path}")
+            break
+
+    if installer_path is None:
         # Если локальный файл не найден, пробуем извлечь из ресурсов
         success, result = extract_bundled_installer()
         if not success:

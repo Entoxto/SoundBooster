@@ -6,14 +6,16 @@ SoundBooster is a Windows-only desktop app for raising effective system volume. 
 
 ## Key Files
 
-- `sound_booster.py`: app entrypoint, CustomTkinter UI, settings load/save, pycaw volume control, EqualizerAPO status prompts.
-- `equalizer_integration.py`: EqualizerAPO detection, optional local installer launch, config path handling, boost config generation.
-- `build.py`: PyInstaller build and `SoundBooster-Dist` packaging.
-- `icon.py`: generated app icon.
-- `requirements.txt`: Python 3.14 dependency minimums.
-- `smoke_test.py`: non-GUI runtime check for importing the app, initializing pycaw volume access, and reporting EqualizerAPO status.
-- `tools/download_equalizer_apo.py`: downloads the official x64 Equalizer APO installer as `EqualizerAPO.exe` for release packaging.
-- `THIRD_PARTY_NOTICES.txt`: source and license notice for Equalizer APO.
+- `app/sound_booster.py`: app entrypoint, CustomTkinter UI, settings load/save, pycaw volume control, EqualizerAPO status prompts.
+- `app/equalizer_integration.py`: EqualizerAPO detection, optional local installer launch, config path handling, boost config generation.
+- `app/icon.py`: generated app icon.
+- `scripts/build.py`: PyInstaller build and `SoundBooster-Dist` packaging.
+- `scripts/smoke_test.py`: non-GUI runtime check for importing the app, initializing pycaw volume access, and reporting EqualizerAPO status.
+- `scripts/download_equalizer_apo.py`: downloads the official x64 Equalizer APO installer as `EqualizerAPO.exe` for release packaging.
+- `config/requirements.txt`: Python 3.14 dependency minimums.
+- `docs/THIRD_PARTY_NOTICES.txt`: source and license notice for Equalizer APO.
+- `start.bat`: user-facing launcher.
+- `build.bat`: user-facing release build entrypoint.
 
 ## Runtime Files
 
@@ -30,14 +32,20 @@ These are local machine artifacts and should not be committed:
 ## Run
 
 ```powershell
-python -m pip install -r requirements.txt
-python sound_booster.py
+start.bat
+```
+
+Manual equivalent:
+
+```powershell
+python -m pip install -r config/requirements.txt
+python app/sound_booster.py
 ```
 
 ## Build
 
 ```powershell
-python build.py
+build.bat
 ```
 
 The build script creates `dist/SoundBooster.exe`, then copies the final distributable into `SoundBooster-Dist/`.
@@ -47,8 +55,8 @@ If `EqualizerAPO.exe` exists in the project root before building, it is bundled/
 To prepare a release package that includes the official x64 Equalizer APO installer:
 
 ```powershell
-python tools/download_equalizer_apo.py
-python build.py
+python scripts/download_equalizer_apo.py
+python scripts/build.py
 ```
 
 Keep `THIRD_PARTY_NOTICES.txt` in the release output when bundling the installer.
@@ -56,18 +64,18 @@ Keep `THIRD_PARTY_NOTICES.txt` in the release output when bundling the installer
 ## Verify
 
 ```powershell
-python -m py_compile sound_booster.py equalizer_integration.py icon.py build.py smoke_test.py tools/download_equalizer_apo.py
-python -m pip install --dry-run -r requirements.txt
-python smoke_test.py
+python -m py_compile app/sound_booster.py app/equalizer_integration.py app/icon.py scripts/build.py scripts/smoke_test.py scripts/download_equalizer_apo.py
+python -m pip install --dry-run -r config/requirements.txt
+python scripts/smoke_test.py
 ```
 
 Manual Windows testing is still required for the GUI, pycaw audio control, EqualizerAPO detection, and writing to the EqualizerAPO config folder.
 
 ## Known Pitfalls
 
-- `pycaw` changed the speaker API. Current versions return an `AudioDevice` with `EndpointVolume`; older examples call `.Activate()` directly. Use `get_endpoint_volume()` in `sound_booster.py` so both shapes remain supported.
-- `smoke_test.py` initializes the audio backend but does not open the GUI and does not write EqualizerAPO boost config.
-- `tools/download_equalizer_apo.py` pins the expected SHA256 for the official Equalizer APO installer. If the installer version changes, update the URL, checksum, and `THIRD_PARTY_NOTICES.txt` together.
+- `pycaw` changed the speaker API. Current versions return an `AudioDevice` with `EndpointVolume`; older examples call `.Activate()` directly. Use `get_endpoint_volume()` in `app/sound_booster.py` so both shapes remain supported.
+- `scripts/smoke_test.py` initializes the audio backend but does not open the GUI and does not write EqualizerAPO boost config.
+- `scripts/download_equalizer_apo.py` pins the expected SHA256 for the official Equalizer APO installer. If the installer version changes, update the URL, checksum, and `docs/THIRD_PARTY_NOTICES.txt` together.
 
 ## Constraints
 
