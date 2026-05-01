@@ -9,6 +9,22 @@ SoundBooster — небольшое Windows-приложение для увел
 
 SoundBooster не является аудиодрайвером и не заменяет EqualizerAPO. Для усиления выше 100% EqualizerAPO должен быть установлен и включен для нужного устройства вывода.
 
+## Скачать
+
+Для обычного использования скачайте готовый архив из раздела [Releases](https://github.com/Entoxto/SoundBooster/releases).
+
+Ожидаемый состав релизного архива:
+
+```txt
+SoundBooster-Dist/
+├── SoundBooster.exe
+├── EqualizerAPO.exe
+├── THIRD_PARTY_NOTICES.txt
+└── README.txt
+```
+
+Запустите `SoundBooster.exe`. Если EqualizerAPO уже установлен, SoundBooster не будет запускать установщик. Если EqualizerAPO не найден, приложение предложит установить его из файла `EqualizerAPO.exe`, который идет рядом в релизном архиве.
+
 ## Текущее состояние
 
 Проект предназначен только для Windows. Текущая среда разработки использует Python 3.14.
