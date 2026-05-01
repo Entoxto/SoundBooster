@@ -65,13 +65,22 @@ def save_settings(settings):
         logger.error(f"Ошибка сохранения настроек: {e}")
 
 
+def get_endpoint_volume():
+    """Возвращает интерфейс громкости для текущего устройства вывода"""
+    speakers = AudioUtilities.GetSpeakers()
+
+    if hasattr(speakers, "EndpointVolume"):
+        return speakers.EndpointVolume
+
+    interface = speakers.Activate(
+        IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+    return cast(interface, POINTER(IAudioEndpointVolume))
+
+
 class SoundBooster:
     def __init__(self):
         try:
-            devices = AudioUtilities.GetSpeakers()
-            interface = devices.Activate(
-                IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
-            self.volume = cast(interface, POINTER(IAudioEndpointVolume))
+            self.volume = get_endpoint_volume()
             
             logger.info("Инициализация SoundBooster успешна")
             logger.info(f"Текущий уровень громкости: {self.volume.GetMasterVolumeLevelScalar():.2f}")
