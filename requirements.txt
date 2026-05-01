@@ -1,8 +1,9 @@
 # SoundBooster dependencies
-pycaw>=20230322
-comtypes>=1.1.14
-pillow>=9.0.0
-customtkinter>=5.2.0
+# Minimums are aligned with the current Python 3.14 development environment.
+pycaw>=20251023
+comtypes>=1.4.16
+pillow>=12.2.0
+customtkinter>=5.2.2
 
 # Build dependencies (optional)
-# pyinstaller>=5.0
+pyinstaller>=6.20.0

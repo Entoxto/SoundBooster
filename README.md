@@ -1,162 +1,170 @@
-# 🔊 SoundBooster
+# SoundBooster
 
-<div align="center">
+SoundBooster — небольшое Windows-приложение для увеличения эффективной громкости системы выше стандартных 100%.
 
-![SoundBooster](https://img.shields.io/badge/Windows-10%2F11-blue?style=for-the-badge&logo=windows)
-![Python](https://img.shields.io/badge/Python-3.8+-yellow?style=for-the-badge&logo=python)
-![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+Приложение работает в два слоя:
 
-**Усиление громкости Windows до 2000%**
+- управляет системной громкостью Windows через `pycaw`;
+- для усиления выше 100% использует EqualizerAPO и записывает для него `Preamp`-конфигурацию.
 
-[Скачать](#-установка) • [Возможности](#-возможности) • [Скриншоты](#-скриншоты) • [FAQ](#-faq)
+SoundBooster не является аудиодрайвером и не заменяет EqualizerAPO. Для усиления выше 100% EqualizerAPO должен быть установлен и включен для нужного устройства вывода.
 
-</div>
+## Текущее состояние
 
----
+Проект предназначен только для Windows. Текущая среда разработки использует Python 3.14.
 
-## 📖 О программе
+Приложение можно запускать из исходников или собирать в `SoundBooster.exe` через PyInstaller. Готовый exe можно переносить между папками, но основная функция усиления выше 100% все равно зависит от установленного EqualizerAPO на конкретном компьютере.
 
-**SoundBooster** — приложение для усиления громкости системы Windows выше стандартного максимума. Когда 100% громкости недостаточно — SoundBooster поможет!
+## Возможности
 
-Использует интеграцию с [EqualizerAPO](https://sourceforge.net/projects/equalizerapo/) для реального программного усиления аудиосигнала без искажений.
+- Темный интерфейс на CustomTkinter.
+- Слайдер усиления от 100% до 2000%.
+- Сохранение состояния усиления, уровня усиления и позиции окна в `settings.json`.
+- Логи работы в `soundbooster.log`.
+- Поиск EqualizerAPO в стандартных папках установки и через реестр Windows.
+- Запуск локального установщика `EqualizerAPO.exe`, если этот файл лежит рядом с приложением или был добавлен в сборку.
 
-## ✨ Возможности
+## Ограничения и безопасность
 
-- 🎚️ **Усиление до 2000%** — реальное увеличение громкости через EqualizerAPO
-- 🌙 **Современный интерфейс** — тёмная тема, плавные анимации
-- 💾 **Сохранение настроек** — запоминает уровень усиления между сессиями
-- 🚀 **Портативность** — один exe файл, не требует установки
-- 🔧 **Встроенный установщик** — EqualizerAPO устанавливается в один клик
+Высокое усиление может вызывать искажения, клиппинг или слишком громкий звук. Начинайте с небольших значений и повышайте уровень постепенно.
 
-## 📸 Скриншоты
+При включении усиления SoundBooster создает файл EqualizerAPO:
 
-<div align="center">
-<img src="https://via.placeholder.com/400x500/1a1a2e/e94560?text=SoundBooster+UI" alt="SoundBooster Interface" width="400">
-</div>
+```txt
+Preamp: <gain> dB
+```
 
-## 📥 Установка
+И добавляет в основной `config.txt` строку:
 
-### Способ 1: Скачать готовый exe (рекомендуется)
+```txt
+Include: sound_booster_gain.txt
+```
 
-1. Перейдите в раздел [**Releases**](../../releases)
-2. Скачайте `SoundBooster.zip`
-3. Распакуйте и запустите `SoundBooster.exe`
-4. При первом запуске установите EqualizerAPO (программа предложит)
-5. **Перезагрузите компьютер** после установки EqualizerAPO
+Запись в папку конфигурации EqualizerAPO может требовать прав, потому что EqualizerAPO обычно установлен в `Program Files`.
 
-### Способ 2: Запуск из исходников
+## Требования
 
-```bash
-# Клонировать репозиторий
-git clone https://github.com/YOUR_USERNAME/SoundBooster.git
+- Windows 10 или Windows 11.
+- Python 3.14 для разработки в текущем состоянии проекта.
+- EqualizerAPO для усиления выше 100%.
+- Зависимости из `requirements.txt`.
+
+Установщик EqualizerAPO не хранится в этом репозитории. Если нужно, чтобы приложение предлагало установку EqualizerAPO, положите `EqualizerAPO.exe` в корень проекта перед запуском или сборкой.
+
+Для релизной сборки можно скачать официальный x64-установщик EqualizerAPO:
+
+```powershell
+python tools/download_equalizer_apo.py
+```
+
+Скрипт сохраняет установщик как `EqualizerAPO.exe`, чтобы текущий код и сборщик нашли его без дополнительных настроек.
+
+## Запуск из исходников
+
+```powershell
+git clone https://github.com/Entoxto/SoundBooster.git
 cd SoundBooster
-
-# Установить зависимости
-pip install -r requirements.txt
-
-# Запустить
+python -m pip install -r requirements.txt
 python sound_booster.py
 ```
 
-### Способ 3: Собрать exe самостоятельно
+Также можно запустить:
 
-```bash
-# Установить зависимости
-pip install -r requirements.txt
+```powershell
+run.bat
+```
 
-# Собрать exe
+## Сборка
+
+```powershell
+python -m pip install -r requirements.txt
 python build.py
 ```
 
-Готовый exe появится в папке `dist/`
+Или:
 
-## 🎯 Использование
-
-1. **Запустите** SoundBooster
-2. **Включите усиление** переключателем
-3. **Выберите уровень** слайдером (100% - 2000%)
-4. Готово! Настройки сохраняются автоматически
-
-## ⚙️ Требования
-
-- **Windows 10/11**
-- **EqualizerAPO** (для усиления >100%) — устанавливается автоматически
-
-### Для запуска из исходников:
-- Python 3.8+
-- Зависимости из `requirements.txt`
-
-## 📁 Структура проекта
-
+```powershell
+build.bat
 ```
+
+PyInstaller сначала создает `dist/SoundBooster.exe`. После этого `build.py` собирает итоговую папку для распространения:
+
+```txt
+SoundBooster-Dist/
+├── SoundBooster.exe
+├── EqualizerAPO.exe    # только если файл был в корне проекта до сборки
+├── THIRD_PARTY_NOTICES.txt
+└── README.txt
+```
+
+Для распространения используйте `SoundBooster-Dist`, а не только сырой `dist`.
+
+## Структура проекта
+
+```txt
 SoundBooster/
-├── sound_booster.py       # Главное приложение
-├── equalizer_integration.py # Интеграция с EqualizerAPO
-├── icon.py                # Генерация иконки
-├── startup.py             # Настройка автозагрузки
-├── build.py               # Скрипт сборки в exe
-├── requirements.txt       # Зависимости Python
+├── sound_booster.py          # Точка входа, UI, настройки, управление громкостью через pycaw
+├── equalizer_integration.py  # Поиск EqualizerAPO, запуск установщика, запись конфигов
+├── icon.py                   # Генерация иконки приложения
+├── startup.py                # Вспомогательный скрипт автозагрузки Windows
+├── build.py                  # Сборка exe через PyInstaller
+├── build.bat                 # Запуск сборки
+├── run.bat                   # Запуск приложения из исходников
+├── tools/
+│   └── download_equalizer_apo.py # Загрузка официального установщика EqualizerAPO
+├── THIRD_PARTY_NOTICES.txt   # Источник и лицензия стороннего установщика
+├── requirements.txt          # Зависимости Python
 └── README.md
 ```
 
-## ❓ FAQ
+Локальные файлы, которые не нужно коммитить:
 
-<details>
-<summary><b>Усиление выше 100% не работает</b></summary>
+- `settings.json`
+- `soundbooster.log`
+- `build/`
+- `dist/`
+- `SoundBooster-Dist/`
+- `EqualizerAPO.exe`
 
-1. Убедитесь, что EqualizerAPO установлен
-2. **Перезагрузите компьютер** после установки
-3. При установке EqualizerAPO выберите правильное аудиоустройство
+## Частые проблемы
 
-</details>
+### Усиление выше 100% не работает
 
-<details>
-<summary><b>Как удалить EqualizerAPO?</b></summary>
+Проверьте, что EqualizerAPO установлен, включен для правильного устройства вывода и что компьютер был перезагружен после установки или изменения устройства.
 
-Панель управления → Программы и компоненты → EqualizerAPO → Удалить
+### Приложение не может установить EqualizerAPO
 
-</details>
+SoundBooster не скачивает установщик сам. Он только запускает локальный файл `EqualizerAPO.exe`. Положите этот файл рядом с `sound_booster.py` при запуске из исходников или в корень проекта перед сборкой.
 
-<details>
-<summary><b>Безопасно ли усиление 2000%?</b></summary>
+Для подготовки релиза используйте:
 
-Да, но используйте осторожно. Высокий уровень усиления может вызвать:
-- Искажения звука
-- Дискомфорт при прослушивании в наушниках
+```powershell
+python tools/download_equalizer_apo.py
+python build.py
+```
 
-Рекомендуем начинать с 150-200% и постепенно увеличивать.
+Если EqualizerAPO уже установлен на компьютере пользователя, SoundBooster не запускает установщик повторно.
 
-</details>
+### Антивирус предупреждает об exe
 
-<details>
-<summary><b>Антивирус блокирует exe</b></summary>
+PyInstaller-сборки иногда вызывают ложные срабатывания. Если бинарник не вызывает доверия, запускайте проект из исходников и проверьте код перед использованием.
 
-Это ложное срабатывание (False Positive). PyInstaller-приложения часто вызывают такую реакцию. Вы можете:
-- Добавить в исключения антивируса
-- Запустить из исходников (`python sound_booster.py`)
+## Проверки для разработки
 
-</details>
+Быстрая проверка синтаксиса:
 
-## 🛠️ Технологии
+```powershell
+python -m py_compile sound_booster.py equalizer_integration.py icon.py startup.py build.py
+```
 
-- **Python 3.12** — основной язык
-- **CustomTkinter** — современный UI
-- **pycaw** — Windows Audio API
-- **EqualizerAPO** — системный эквалайзер для усиления
-- **PyInstaller** — сборка в exe
+Проверка разрешения зависимостей под текущую версию Python:
 
-## 📄 Лицензия
+```powershell
+python -m pip install --dry-run -r requirements.txt
+```
 
-MIT License — используйте свободно!
+Интерфейс, работу `pycaw`, обнаружение EqualizerAPO и запись в конфиг EqualizerAPO нужно проверять вручную на Windows с реальным аудиоустройством.
 
-## 🤝 Вклад
+## Лицензия
 
-Pull requests приветствуются! Для крупных изменений сначала откройте issue.
-
----
-
-<div align="center">
-
-**⭐ Если проект полезен — поставьте звезду!**
-
-</div>
+MIT License.
