@@ -16,7 +16,7 @@ def check_pyinstaller():
     except ImportError:
         print("PyInstaller не установлен. Устанавливаем...")
         try:
-            subprocess.check_call([sys.executable, "-m", "pip", "install", "pyinstaller"])
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "pyinstaller>=6.20.0"])
             print("PyInstaller успешно установлен.")
             return True
         except subprocess.CalledProcessError:
@@ -56,6 +56,8 @@ def build_executable():
     else:
         print("ВНИМАНИЕ: EqualizerAPO.exe не найден в текущей директории")
         print("Программа будет собрана без установщика EqualizerAPO")
+        print("Для релизной сборки можно скачать официальный установщик:")
+        print("python tools/download_equalizer_apo.py")
     
     # Настраиваем команду для PyInstaller
     # Добавляем --collect-all customtkinter для корректной сборки
@@ -90,6 +92,13 @@ def build_executable():
             shutil.copy(
                 equalizer_path,
                 os.path.join(dist_output, "EqualizerAPO.exe")
+            )
+
+        notices_path = os.path.join(current_dir, "THIRD_PARTY_NOTICES.txt")
+        if os.path.exists(notices_path):
+            shutil.copy(
+                notices_path,
+                os.path.join(dist_output, "THIRD_PARTY_NOTICES.txt")
             )
         
         # Создаем README.txt для дистрибутива
@@ -132,19 +141,30 @@ def main():
     
     # Проверяем зависимости
     print("Проверяем зависимости...")
-    dependencies = ["pycaw", "comtypes", "pillow", "customtkinter"]
-    for dep in dependencies:
+    dependencies = [
+        ("pycaw>=20251023", "pycaw"),
+        ("comtypes>=1.4.16", "comtypes"),
+        ("pillow>=12.2.0", "PIL"),
+        ("customtkinter>=5.2.2", "customtkinter"),
+    ]
+    for package_name, import_name in dependencies:
         try:
-            __import__(dep.replace("-", "_").split("==")[0])
+            __import__(import_name)
         except ImportError:
-            print(f"Устанавливаем {dep}...")
-            subprocess.check_call([sys.executable, "-m", "pip", "install", dep])
+            print(f"Устанавливаем {package_name}...")
+            subprocess.check_call([sys.executable, "-m", "pip", "install", package_name])
     
     # Собираем
     build_executable()
     
-    print("\nГотово! Нажмите Enter для выхода...")
-    input()
+    if sys.stdin.isatty():
+        print("\nГотово! Нажмите Enter для выхода...")
+        try:
+            input()
+        except EOFError:
+            pass
+    else:
+        print("\nГотово!")
 
 if __name__ == "__main__":
     main()

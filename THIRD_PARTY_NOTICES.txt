@@ -1,0 +1,25 @@
+Third-party components
+======================
+
+Equalizer APO
+-------------
+
+SoundBooster can optionally launch the official Equalizer APO installer when
+Equalizer APO is not already installed on the user's machine.
+
+Project: Equalizer APO
+Source: https://sourceforge.net/projects/equalizerapo/
+License: GNU General Public License version 2.0 (GPLv2)
+
+The Equalizer APO installer is not committed to this repository. Release
+packages may include an official installer downloaded from SourceForge.
+
+Current release-packaging target:
+
+- File: EqualizerAPO-x64-1.4.2.exe
+- Local release name: EqualizerAPO.exe
+- SourceForge path: https://sourceforge.net/projects/equalizerapo/files/1.4.2/EqualizerAPO-x64-1.4.2.exe/download
+- Published file size on SourceForge: 12.0 MB
+
+If this bundled installer is updated, update this notice and the downloader
+script at the same time.
