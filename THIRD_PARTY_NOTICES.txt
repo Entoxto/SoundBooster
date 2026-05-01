@@ -20,6 +20,7 @@ Current release-packaging target:
 - Local release name: EqualizerAPO.exe
 - SourceForge path: https://sourceforge.net/projects/equalizerapo/files/1.4.2/EqualizerAPO-x64-1.4.2.exe/download
 - Published file size on SourceForge: 12.0 MB
+- SHA256: 7403be7427bbe1936a40dded082829b6e217fc4f5990fee5cba501f0ae055afa
 
 If this bundled installer is updated, update this notice and the downloader
 script at the same time.

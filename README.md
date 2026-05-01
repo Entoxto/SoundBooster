@@ -73,7 +73,7 @@ Include: sound_booster_gain.txt
 python tools/download_equalizer_apo.py
 ```
 
-Скрипт сохраняет установщик как `EqualizerAPO.exe`, чтобы текущий код и сборщик нашли его без дополнительных настроек.
+Скрипт сохраняет установщик как `EqualizerAPO.exe`, проверяет SHA256 и только после этого использует файл для сборки.
 
 ## Запуск из исходников
 
@@ -122,7 +122,7 @@ SoundBooster/
 ├── sound_booster.py          # Точка входа, UI, настройки, управление громкостью через pycaw
 ├── equalizer_integration.py  # Поиск EqualizerAPO, запуск установщика, запись конфигов
 ├── icon.py                   # Генерация иконки приложения
-├── startup.py                # Вспомогательный скрипт автозагрузки Windows
+├── smoke_test.py             # Проверка импорта, pycaw и статуса EqualizerAPO без запуска GUI
 ├── build.py                  # Сборка exe через PyInstaller
 ├── build.bat                 # Запуск сборки
 ├── run.bat                   # Запуск приложения из исходников
@@ -170,13 +170,19 @@ PyInstaller-сборки иногда вызывают ложные срабат
 Быстрая проверка синтаксиса:
 
 ```powershell
-python -m py_compile sound_booster.py equalizer_integration.py icon.py startup.py build.py
+python -m py_compile sound_booster.py equalizer_integration.py icon.py build.py smoke_test.py tools/download_equalizer_apo.py
 ```
 
 Проверка разрешения зависимостей под текущую версию Python:
 
 ```powershell
 python -m pip install --dry-run -r requirements.txt
+```
+
+Smoke-проверка без запуска GUI:
+
+```powershell
+python smoke_test.py
 ```
 
 Интерфейс, работу `pycaw`, обнаружение EqualizerAPO и запись в конфиг EqualizerAPO нужно проверять вручную на Windows с реальным аудиоустройством.
